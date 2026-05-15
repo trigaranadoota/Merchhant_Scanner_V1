@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Shop owners: only own profile read
+    match /shop_owners/{ownerId} {
+      allow read: if request.auth != null && (
+        resource == null || resource.data.email == request.auth.token.email
+      );
+      // Writes are only via server
+      allow write: if false;
+      
+      // Subcollection redemptions
+      match /redemptions/{logId} {
+        allow read: if request.auth != null && 
+          get(/databases/$(database)/documents/shop_owners/$(ownerId)).data.email == request.auth.token.email;
+        allow write: if false;
+      }
+    }
+
+    // Coupons: No client access (server handles everything)
+    match /coupons/{couponId} {
+      allow read, write: if false;
+    }
+  }
+}
