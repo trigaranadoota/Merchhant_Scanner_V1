@@ -74,6 +74,15 @@ export default function Dashboard({ user }: { user: User }) {
     fetchData();
   }, [user]);
 
+  const handleSignOut = async () => {
+    if (localStorage.getItem('bypassAuth') === 'true') {
+      localStorage.removeItem('bypassAuth');
+      window.location.reload();
+      return;
+    }
+    await signOut(auth);
+  };
+
   const handleValidate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode) return;
@@ -157,7 +166,7 @@ export default function Dashboard({ user }: { user: User }) {
           Your account ({user.email}) is not authorized to access the shop partner portal.
         </p>
         <button 
-          onClick={() => signOut(auth)}
+          onClick={handleSignOut}
           className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-all font-medium shadow-lg shadow-slate-900/20"
         >
           <LogOut className="w-4 h-4" /> Sign Out
@@ -197,7 +206,7 @@ export default function Dashboard({ user }: { user: User }) {
           <div className="bg-slate-900 text-white rounded-2xl p-5 shadow-xl shadow-slate-900/10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-sm font-bold shadow-inner">
-                {user.email?.[0].toUpperCase()}
+                {user.email?.[0]?.toUpperCase() || 'U'}
               </div>
               <div className="overflow-hidden">
                 <p className="text-sm font-bold truncate">{shop?.name}</p>
@@ -205,7 +214,7 @@ export default function Dashboard({ user }: { user: User }) {
               </div>
             </div>
             <button 
-              onClick={() => signOut(auth)}
+              onClick={handleSignOut}
               className="w-full py-2.5 bg-slate-800 rounded-xl text-xs font-bold hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
             >
               <LogOut className="w-3 h-3" /> Sign Out
@@ -260,6 +269,9 @@ export default function Dashboard({ user }: { user: User }) {
                     Check
                   </button>
                 </form>
+                <div className="text-sm text-slate-400 mb-8 px-2 font-medium">
+                  Testing? Use codes: <button onClick={() => setCouponCode('TEST10')} className="font-mono text-emerald-600 hover:underline mx-1">TEST10</button> or <button onClick={() => setCouponCode('SAVE25')} className="font-mono text-emerald-600 hover:underline mx-1">SAVE25</button>
+                </div>
 
                 <AnimatePresence mode="wait">
                   {validationError && (

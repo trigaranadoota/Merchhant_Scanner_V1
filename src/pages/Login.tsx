@@ -3,12 +3,9 @@ import { signInWithGoogle } from '../lib/firebase';
 import { Store, LogIn } from 'lucide-react';
 
 export default function Login() {
-  const handleLogin = async () => {
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+  const handleLogin = () => {
+    localStorage.setItem('bypassAuth', 'true');
+    window.location.reload();
   };
 
   return (
@@ -35,7 +32,7 @@ export default function Login() {
             className="flex items-center justify-center w-full gap-4 px-8 py-5 text-white bg-slate-900 rounded-3xl hover:bg-slate-800 transition-all duration-300 shadow-xl shadow-slate-900/20 active:scale-95 group"
           >
             <LogIn className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-            <span className="font-black text-lg">Sign in with Google</span>
+            <span className="font-black text-lg">Enter Merchant Portal</span>
           </button>
           
           <div className="mt-10 pt-8 border-t border-slate-50 w-full">

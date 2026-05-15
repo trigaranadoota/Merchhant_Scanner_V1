@@ -10,6 +10,12 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (localStorage.getItem('bypassAuth') === 'true') {
+      setUser({ email: 'demo@merchant.com', getIdToken: async () => 'BYPASS_TOKEN' } as any);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
